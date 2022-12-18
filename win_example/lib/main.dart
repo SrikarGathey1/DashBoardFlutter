@@ -1,9 +1,20 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:developer';
+import 'package:hive/hive.dart';
+import 'package:win_example/user.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path/path.dart';
 import "package:flutter/material.dart";
 
+late Box box;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(UserAdapter());
+  box = await Hive.openBox<User>('users');
+  box.put("venkatnaras123@gmail.com",
+      User(email: "venkatnaras123@gmail.com", password: "OneTwoThree"));
 
   runApp(MaterialApp(
     home: MyApp(),
@@ -22,6 +33,8 @@ class MyApp extends StatefulWidget {
 
 class _State extends State<MyApp> {
   @override
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -37,7 +50,7 @@ class _State extends State<MyApp> {
                     Center(
                         child: Padding(
                       padding: EdgeInsets.all(15.0),
-                      child: Text("Doctor -  T",
+                      child: Text("Doctor T",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 30,
@@ -58,6 +71,7 @@ class _State extends State<MyApp> {
                         child: Container(
                           margin: EdgeInsets.only(left: 25.0, right: 25.0),
                           child: TextFormField(
+                            controller: emailController,
                             decoration: InputDecoration(
                               hintText: "Username",
                               suffixIcon: Icon(Icons.email),
@@ -75,6 +89,8 @@ class _State extends State<MyApp> {
                         child: Container(
                           margin: EdgeInsets.only(left: 25.0, right: 25.0),
                           child: TextFormField(
+                            obscureText: true,
+                            controller: passwordController,
                             decoration: InputDecoration(
                               hintText: "Password",
                               suffixIcon: Icon(Icons.password_rounded),
@@ -103,7 +119,29 @@ class _State extends State<MyApp> {
                         padding: EdgeInsets.all(25.0),
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(context, _SearchPage());
+                            String userEmail = emailController.text;
+                            String userPassword = passwordController.text;
+                            // log(userEmail);
+                            // log(userPassword);
+                            User sample = box.get(userEmail,
+                                defaultValue:
+                                    User(email: "email", password: "password"));
+                            // log(sample.email);
+                            // if (sample.email == userEmail) {
+                            // log("yep");
+                            // }
+                            if (sample.email == "email") {
+                              log("Email does not exist");
+                            } else {
+                              if (sample.password == userPassword) {
+                                // log(sample.password);
+                                Navigator.push(context, _SearchPage());
+                                emailController.clear();
+                                passwordController.clear();
+                              } else {
+                                log("Invalid password");
+                              }
+                            }
                           },
                           child: Text("Log In"),
                           style: ButtonStyle(
@@ -240,6 +278,7 @@ class _RegisterPageWidget extends StatelessWidget {
                         child: Container(
                           margin: EdgeInsets.only(left: 25.0, right: 25.0),
                           child: TextFormField(
+                            obscureText: true,
                             controller: passwordController,
                             decoration: InputDecoration(
                               hintText: "Create a password",
@@ -258,6 +297,7 @@ class _RegisterPageWidget extends StatelessWidget {
                         child: Container(
                           margin: EdgeInsets.only(left: 25.0, right: 25.0),
                           child: TextFormField(
+                            obscureText: true,
                             controller: resetController,
                             decoration: InputDecoration(
                               hintText: "Confirm Password",
@@ -274,7 +314,30 @@ class _RegisterPageWidget extends StatelessWidget {
                     Padding(
                         padding: EdgeInsets.all(25.0),
                         child: ElevatedButton(
-                          onPressed: null,
+                          onPressed: (() {
+                            String userEmail = emailController.text;
+                            User sample = box.get(userEmail,
+                                defaultValue:
+                                    User(email: "email", password: "password"));
+                            String userPassword = passwordController.text;
+                            String userConfirm = resetController.text;
+                            if (sample.email == userEmail) {
+                              log("This email id already exists. Try a different one.");
+                            }
+                            if (userPassword == userConfirm) {
+                              box.put(
+                                  userEmail,
+                                  User(
+                                      email: userEmail,
+                                      password: userPassword));
+                              Navigator.pop(context);
+                              emailController.clear();
+                              passwordController.clear();
+                              resetController.clear();
+                            } else {
+                              log("Passwords do not match");
+                            }
+                          }),
                           child: Text("Register"),
                           style: ButtonStyle(
                               shape: MaterialStateProperty.all<
