@@ -9,11 +9,14 @@ import 'package:intl/intl.dart';
 import "package:flutter/material.dart";
 
 late Box box;
+late Box patientBox;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(UserAdapter());
+  Hive.registerAdapter(PatientAdapter());
   box = await Hive.openBox<User>('users');
+  patientBox = await Hive.openBox<Patient>('patients');
   box.put("venkatnaras123@gmail.com",
       User(email: "venkatnaras123@gmail.com", password: "OneTwoThree"));
 
@@ -433,7 +436,16 @@ class _NewPatientPage extends StatefulWidget {
 
 class _NewPatientPageDis extends State<_NewPatientPage> {
   bool value = false;
-  var _dateController = TextEditingController();
+  var firstCon = TextEditingController();
+  var middleCon = TextEditingController();
+  var lastCon = TextEditingController();
+  var dateController = TextEditingController();
+  var genderCon = TextEditingController();
+  var phoneCon = TextEditingController();
+  var uidaiCon = TextEditingController();
+  var heightCon = TextEditingController();
+  var weightCon = TextEditingController();
+  var emailCon = TextEditingController();
   var standard = 47.5;
   String? gender;
   String dropdown = "Female";
@@ -556,6 +568,7 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                             child: SizedBox(
                               width: 500,
                               child: TextFormField(
+                                controller: firstCon,
                                 decoration: InputDecoration(
                                   hintText: "Patient's First Name",
                                   suffixIcon: Icon(Icons.person),
@@ -579,6 +592,7 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                             child: SizedBox(
                               width: 500,
                               child: TextFormField(
+                                controller: middleCon,
                                 decoration: InputDecoration(
                                   hintText: "Patient's Middle Name",
                                   suffixIcon: Icon(Icons.person),
@@ -602,6 +616,7 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                             child: SizedBox(
                               width: 500,
                               child: TextFormField(
+                                controller: lastCon,
                                 decoration: InputDecoration(
                                   hintText: "Patient's Last Name",
                                   suffixIcon: Icon(Icons.person),
@@ -625,7 +640,7 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                               child: SizedBox(
                                   width: 500,
                                   child: TextField(
-                                      controller: _dateController,
+                                      controller: dateController,
                                       decoration: const InputDecoration(
                                           icon: Icon(Icons.calendar_today),
                                           labelText: "Enter Date of Birth"),
@@ -636,7 +651,7 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                                                 initialDate: DateTime.now(),
                                                 firstDate: DateTime(1965),
                                                 lastDate: DateTime(2023));
-                                        _dateController.text = DateFormat.yMd()
+                                        dateController.text = DateFormat.yMd()
                                             .format(pickedDate!);
                                       })))
                         ],
@@ -676,6 +691,7 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                             child: SizedBox(
                               width: 500,
                               child: TextFormField(
+                                controller: phoneCon,
                                 decoration: InputDecoration(
                                   hintText: "Patient's Contact Number",
                                   suffixIcon: Icon(Icons.phone),
@@ -699,6 +715,7 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                             child: SizedBox(
                               width: 500,
                               child: TextFormField(
+                                controller: uidaiCon,
                                 decoration: InputDecoration(
                                   hintText: "Patient's Adhaar Number",
                                   suffixIcon: Icon(Icons.perm_identity),
@@ -722,6 +739,7 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                             child: SizedBox(
                               width: 500,
                               child: TextFormField(
+                                controller: heightCon,
                                 decoration: InputDecoration(
                                   hintText:
                                       "Patient's Height in Cms(1 foot = 30.48 cm, 1 inch = 2.54 cm",
@@ -746,6 +764,7 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                             child: SizedBox(
                               width: 500,
                               child: TextFormField(
+                                controller: weightCon,
                                 decoration: InputDecoration(
                                   hintText:
                                       "Patient's Weight in Kgs. 1 pound = 0.454 Kg.",
@@ -771,6 +790,7 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                             child: SizedBox(
                               width: 500,
                               child: TextFormField(
+                                controller: emailCon,
                                 decoration: InputDecoration(
                                   hintText: "Email Address",
                                   suffixIcon: Icon(Icons.email_sharp),
@@ -827,7 +847,56 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                   child: Padding(
                     padding: EdgeInsets.all(30.0),
                     child: ElevatedButton(
-                      onPressed: (() {}),
+                      onPressed: (() {
+                        String first = firstCon.text;
+                        String middle = middleCon.text;
+                        String last = lastCon.text;
+                        String dob = dateController.text;
+                        String gender = genderCon.text;
+                        String phone = phoneCon.text;
+                        String uidai = uidaiCon.text;
+                        String height = heightCon.text;
+                        String weight = weightCon.text;
+                        String email = emailCon.text;
+                        patientBox.put(
+                            uidai,
+                            Patient(
+                                first: first,
+                                middle: middle,
+                                last: last,
+                                dob: dob,
+                                gender: gender,
+                                phone: 0,
+                                uidai: 0,
+                                height: 0,
+                                weight: 0,
+                                email: email));
+                        Navigator.pop(context);
+                        firstCon.clear();
+                        middleCon.clear();
+                        lastCon.clear();
+                        dateController.clear();
+                        genderCon.clear();
+                        phoneCon.clear();
+                        uidaiCon.clear();
+                        heightCon.clear();
+                        weightCon.clear();
+                        emailCon.clear();
+                        Patient pat1 = patientBox.get(uidai,
+                            defaultValue: Patient(
+                                first: "Not Given",
+                                middle: "Not Given",
+                                last: "Not Given",
+                                email: "Not Given",
+                                dob: "Not Given",
+                                gender: "Not Given",
+                                phone: 0,
+                                height: 0,
+                                weight: 0,
+                                uidai: 0));
+                        log("${pat1.email}");
+                        Navigator.pop(context);
+                      }),
                       child: Text("Create Record"),
                       style: ButtonStyle(
                           shape:

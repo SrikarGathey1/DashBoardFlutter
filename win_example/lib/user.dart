@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 part 'user.g.dart';
 
@@ -11,4 +10,49 @@ class User extends HiveObject {
 
   @HiveField(1)
   late String password;
+}
+
+@HiveType(typeId: 8)
+class Patient extends HiveObject {
+  Patient(
+      {required this.first,
+      required this.middle,
+      required this.last,
+      required this.dob,
+      required this.gender,
+      required this.phone,
+      required this.uidai,
+      required this.height,
+      required this.weight,
+      required this.email});
+
+  @HiveField(9)
+  late String first;
+
+  @HiveField(10)
+  late String middle;
+
+  @HiveField(11)
+  late String last;
+
+  @HiveField(12)
+  late String dob;
+
+  @HiveField(13)
+  late String gender;
+
+  @HiveField(14)
+  late int phone;
+
+  @HiveField(15)
+  late int uidai;
+
+  @HiveField(16)
+  late int height;
+
+  @HiveField(17)
+  late int weight;
+
+  @HiveField(18)
+  late String email;
 }
