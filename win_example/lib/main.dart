@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:win_example/user.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path/path.dart';
+import 'package:intl/intl.dart';
 import "package:flutter/material.dart";
 
 late Box box;
@@ -18,6 +19,10 @@ void main() async {
 
   runApp(MaterialApp(
     home: MyApp(),
+    routes: <String, WidgetBuilder>{
+      "/patientreg": (BuildContext context) => new _NewPatientPage(),
+      //add more routes here
+    },
     theme: ThemeData(
       brightness: Brightness.dark,
       primaryColor: Colors.blueAccent,
@@ -119,6 +124,7 @@ class _State extends State<MyApp> {
                         padding: EdgeInsets.all(25.0),
                         child: ElevatedButton(
                           onPressed: () {
+                            Navigator.push(context, _SearchPage());
                             String userEmail = emailController.text;
                             String userPassword = passwordController.text;
                             // log(userEmail);
@@ -199,13 +205,33 @@ class _SearchPageWidget extends StatelessWidget {
         child: Column(
           children: [
             Text("Search Page. Login Successful."),
-            ElevatedButton(
-                onPressed: (() {
-                  Navigator.pop(context);
-                }),
-                child: Text("Back to Login")),
-            ElevatedButton(
-                onPressed: null, child: Text("Records from Database"))
+            Padding(
+                padding: EdgeInsets.all(10.0),
+                child: ElevatedButton(
+                    onPressed: (() {
+                      Navigator.pop(context);
+                    }),
+                    child: Text("Back to Login"))),
+            Padding(
+                padding: EdgeInsets.all(10.0),
+                child: ElevatedButton(
+                    onPressed: null, child: Text("Search Records"))),
+            Padding(
+                padding: EdgeInsets.all(10.0),
+                child: ElevatedButton(
+                    onPressed: (() {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => _NewPatientPage()));
+                    }),
+                    child: Text("New Patient Record"))),
+            Padding(
+                padding: EdgeInsets.all(10.0),
+                child: ElevatedButton(
+                    onPressed: (() {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => _BreathAnalysis()));
+                    }),
+                    child: Text("View Record")))
           ],
         ),
       ),
@@ -400,19 +426,497 @@ class _ResetPasswordPage extends MaterialPageRoute {
         });
 }
 
-class UserData {
-  final String email;
-  final String password;
+class _NewPatientPage extends StatefulWidget {
+  @override
+  _NewPatientPageDis createState() => _NewPatientPageDis();
+}
 
-  UserData({
-    required this.email,
-    required this.password,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {
-      "email": email,
-      'password': password,
-    };
+class _NewPatientPageDis extends State<_NewPatientPage> {
+  bool value = false;
+  var _dateController = TextEditingController();
+  var standard = 47.5;
+  String? gender;
+  String dropdown = "Female";
+  var items = ["Female", "Male", "Non - Binary"];
+  Widget build(BuildContext context) {
+    String _selectedGender = "male";
+    return Scaffold(
+        body: Container(
+      alignment: Alignment.center,
+      child: ListView(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text("New Patient Registration Page",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                            fontFamily: "Pacifico",
+                            color: Colors.blue[600]))),
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(bottom: 20.0),
+                child: Text(
+                  "Fill the following form based on the prompts given.",
+                  style: TextStyle(fontSize: 15.0),
+                ),
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Padding(
+                          padding:
+                              EdgeInsets.only(top: standard, bottom: standard),
+                          child: Text("First Name"))
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Padding(
+                          padding:
+                              EdgeInsets.only(top: standard, bottom: standard),
+                          child: Text("Middle Name"))
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Padding(
+                          padding:
+                              EdgeInsets.only(top: standard, bottom: standard),
+                          child: Text("Last Name"))
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Padding(
+                          padding:
+                              EdgeInsets.only(top: standard, bottom: standard),
+                          child: Text("Date Of Birth"))
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Padding(
+                          padding:
+                              EdgeInsets.only(top: standard, bottom: standard),
+                          child: Text("Gender")),
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Padding(
+                          padding:
+                              EdgeInsets.only(top: standard, bottom: standard),
+                          child: Text("Phone Number")),
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Padding(
+                          padding:
+                              EdgeInsets.only(top: standard, bottom: standard),
+                          child: Text("UIDAI Number"))
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Padding(
+                          padding:
+                              EdgeInsets.only(top: standard, bottom: standard),
+                          child: Text("Height"))
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Padding(
+                          padding:
+                              EdgeInsets.only(top: standard, bottom: standard),
+                          child: Text("Weight"))
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Padding(
+                          padding:
+                              EdgeInsets.only(top: standard, bottom: standard),
+                          child: Text("Email Address"))
+                    ]),
+                  ],
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(30.0),
+                            child: SizedBox(
+                              width: 500,
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  hintText: "Patient's First Name",
+                                  suffixIcon: Icon(Icons.person),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.blue, width: 2)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 2)),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(30.0),
+                            child: SizedBox(
+                              width: 500,
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  hintText: "Patient's Middle Name",
+                                  suffixIcon: Icon(Icons.person),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.blue, width: 2)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 2)),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(30.0),
+                            child: SizedBox(
+                              width: 500,
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  hintText: "Patient's Last Name",
+                                  suffixIcon: Icon(Icons.person),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.blue, width: 2)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 2)),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.all(30.0),
+                              child: SizedBox(
+                                  width: 500,
+                                  child: TextField(
+                                      controller: _dateController,
+                                      decoration: const InputDecoration(
+                                          icon: Icon(Icons.calendar_today),
+                                          labelText: "Enter Date of Birth"),
+                                      onTap: () async {
+                                        DateTime? pickedDate =
+                                            await showDatePicker(
+                                                context: context,
+                                                initialDate: DateTime.now(),
+                                                firstDate: DateTime(1965),
+                                                lastDate: DateTime(2023));
+                                        _dateController.text = DateFormat.yMd()
+                                            .format(pickedDate!);
+                                      })))
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(30.0),
+                            child: Container(
+                              width: 500,
+                              child: DropdownButton(
+                                value: dropdown,
+                                underline: SizedBox(),
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                items: items.map((String items) {
+                                  return DropdownMenuItem(
+                                    value: items,
+                                    child: Text(items),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    dropdown = newValue!;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(30.0),
+                            child: SizedBox(
+                              width: 500,
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  hintText: "Patient's Contact Number",
+                                  suffixIcon: Icon(Icons.phone),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.blue, width: 2)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 2)),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(30.0),
+                            child: SizedBox(
+                              width: 500,
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  hintText: "Patient's Adhaar Number",
+                                  suffixIcon: Icon(Icons.perm_identity),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.blue, width: 2)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 2)),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(30.0),
+                            child: SizedBox(
+                              width: 500,
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  hintText:
+                                      "Patient's Height in Cms(1 foot = 30.48 cm, 1 inch = 2.54 cm",
+                                  suffixIcon: Icon(Icons.height),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.blue, width: 2)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 2)),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(30.0),
+                            child: SizedBox(
+                              width: 500,
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  hintText:
+                                      "Patient's Weight in Kgs. 1 pound = 0.454 Kg.",
+                                  suffixIcon: Icon(Icons.person_add_alt_sharp),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.blue, width: 2)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 2)),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 30.0, bottom: 30.0, left: 85.0),
+                            child: SizedBox(
+                              width: 500,
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  hintText: "Email Address",
+                                  suffixIcon: Icon(Icons.email_sharp),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.blue, width: 2)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 2)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 30.0, bottom: 30.0),
+                            child: TextButton(
+                              onPressed: null,
+                              child: Text('Verify Email',
+                                  style: TextStyle(
+                                      decoration: TextDecoration.underline)),
+                            ),
+                          )
+                        ],
+                      ),
+                    ]),
+              )
+            ],
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Padding(
+              padding: EdgeInsets.all(30.0),
+              child: Checkbox(
+                checkColor: Colors.blueAccent,
+                value: this.value,
+                onChanged: (value) {
+                  setState(() {
+                    this.value = value!;
+                  });
+                },
+              ),
+            ),
+            Padding(
+                padding: EdgeInsets.all(30.0),
+                child: Text(
+                  "I authorise CATS to analyze and store the data based on the recorded sample.",
+                  style: TextStyle(color: Colors.grey),
+                ))
+          ]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                  width: 300,
+                  child: Padding(
+                    padding: EdgeInsets.all(30.0),
+                    child: ElevatedButton(
+                      onPressed: (() {}),
+                      child: Text("Create Record"),
+                      style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(18.0)))),
+                    ),
+                  )),
+              SizedBox(
+                  width: 300,
+                  child: Padding(
+                    padding: EdgeInsets.all(30.0),
+                    child: ElevatedButton(
+                      onPressed: (() {
+                        Navigator.pop(context);
+                      }),
+                      child: Text("Back To Search"),
+                      style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(18.0)))),
+                    ),
+                  )),
+            ],
+          )
+        ],
+      ),
+    ));
   }
+}
+
+class _BreathAnalysis extends StatefulWidget {
+  @override
+  _BreathAnalysisPage createState() => _BreathAnalysisPage();
+}
+
+class _BreathAnalysisPage extends State<_BreathAnalysis> {
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Container(
+      padding: EdgeInsets.all(32.0),
+      child: Center(
+        child: Column(
+          children: [
+            Text("Breath Analysis Page"),
+            Padding(
+                padding: EdgeInsets.all(20.0),
+                child: ElevatedButton(
+                    onPressed: (() {
+                      Navigator.push(context, _AnalysisReportPage());
+                    }),
+                    child: Text("Save And Analyse"))),
+            Padding(
+                padding: EdgeInsets.all(20.0),
+                child: ElevatedButton(
+                    onPressed: (() {
+                      Navigator.pop(context);
+                    }),
+                    child: Text("Back to Search"))),
+          ],
+        ),
+      ),
+    ));
+  }
+}
+
+class _AnalysisReportPage extends MaterialPageRoute {
+  _AnalysisReportPage()
+      : super(builder: (BuildContext context) {
+          return Scaffold(
+              body: Container(
+            padding: EdgeInsets.all(32.0),
+            child: Center(
+              child: Column(
+                children: [
+                  Text("Analysis Report Page"),
+                  Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: ElevatedButton(
+                          onPressed: (() {
+                            Navigator.pop(context);
+                          }),
+                          child: Text("Back to Analyser"))),
+                ],
+              ),
+            ),
+          ));
+        });
 }
