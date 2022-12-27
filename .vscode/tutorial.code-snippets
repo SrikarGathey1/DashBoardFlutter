@@ -29,3 +29,23 @@
 	}
 
 }
+
+
+{
+	DropdownButton(
+                          value: dropdown,
+                          underline: SizedBox(),
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          items: machines.map((String machines) {
+                            return DropdownMenuItem(
+                              value: machines,
+                              child: Text(machines),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdown = newValue!;
+                            });
+                          },
+                        ),
+}

@@ -936,32 +936,359 @@ class _BreathAnalysis extends StatefulWidget {
   _BreathAnalysisPage createState() => _BreathAnalysisPage();
 }
 
-class _BreathAnalysisPage extends State<_BreathAnalysis> {
+class _BreathAnalysisPage extends State<_BreathAnalysis>
+    with TickerProviderStateMixin {
+  String second = "10";
+  var seconds = ["10", "20", "30"];
+  String dropdown = "DR-T-ALPHA01";
+  var machines = ["DR-T-ALPHA01", "DR-T-BETA01"];
+
+  late AnimationController controller;
+
+  double progress = 1.0;
+  bool isPlaying = false;
+
+  String get countText {
+    Duration count = controller.duration! * controller.value;
+    return '${count.inSeconds}';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller =
+        AnimationController(vsync: this, duration: Duration(seconds: 10));
+    controller.addListener(() {
+      if (controller.isAnimating) {
+        setState(() {
+          progress = controller.value;
+        });
+      } else {
+        setState(() {
+          progress = 1.0;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    Patient disPat = patientBox.get("default",
+        defaultValue: Patient(
+            first: "Srikar",
+            middle: "Middle",
+            last: "Gade",
+            dob: "04/17/2000",
+            gender: "Male",
+            phone: 9597216381,
+            uidai: 111122223333,
+            height: 190,
+            weight: 75,
+            email: "Empty"));
     return Scaffold(
-        body: Container(
-      padding: EdgeInsets.all(32.0),
-      child: Center(
-        child: Column(
-          children: [
-            Text("Breath Analysis Page"),
-            Padding(
-                padding: EdgeInsets.all(20.0),
-                child: ElevatedButton(
-                    onPressed: (() {
-                      Navigator.push(context, _AnalysisReportPage());
-                    }),
-                    child: Text("Save And Analyse"))),
-            Padding(
-                padding: EdgeInsets.all(20.0),
-                child: ElevatedButton(
-                    onPressed: (() {
-                      Navigator.pop(context);
-                    }),
-                    child: Text("Back to Search"))),
-          ],
-        ),
-      ),
+        body: ListView(
+      children: [
+        Container(
+          padding: EdgeInsets.all(32.0),
+          child: Center(
+            child: Column(
+              children: [
+                Text("Breath Analysis Page",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        fontFamily: "Oswald",
+                        color: Colors.blue[600])),
+                Container(
+                  width: 500,
+                  margin: EdgeInsets.all(30.0),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: 40.0, bottom: 40.0, left: 20.0, right: 20.0),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                "Patient ID: ${disPat.uidai}",
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.blue.shade400),
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10.0,
+                                      bottom: 10.0,
+                                      left: 20.0,
+                                      right: 20.0),
+                                  child: Text(
+                                      "${disPat.first}" +
+                                          " " +
+                                          "${disPat.last}",
+                                      style: TextStyle(fontSize: 30))),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10.0,
+                                      bottom: 10.0,
+                                      left: 20.0,
+                                      right: 20.0),
+                                  child: Text("${disPat.dob}"))
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10.0,
+                                      bottom: 10.0,
+                                      left: 20.0,
+                                      right: 20.0),
+                                  child: Text(
+                                    "${disPat.gender}",
+                                  )),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10.0,
+                                      bottom: 10.0,
+                                      left: 20.0,
+                                      right: 20.0),
+                                  child: Text(
+                                    "Height: ${disPat.height} cm.",
+                                  )),
+                              Padding(
+                                  padding:
+                                      EdgeInsets.only(left: 20.0, right: 20.0),
+                                  child: Text(
+                                    "Weight: ${disPat.weight} Kg.",
+                                  )),
+                            ],
+                          ),
+                        ]),
+                  ),
+                ),
+                Padding(
+                    padding: EdgeInsets.all(30.0),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: 300,
+                          height: 300,
+                          child: CircularProgressIndicator(
+                            value: progress,
+                            strokeWidth: 6,
+                          ),
+                        ),
+                        AnimatedBuilder(
+                            animation: controller,
+                            builder: (context, child) => Text(
+                                  countText,
+                                  style: TextStyle(fontSize: 60),
+                                ))
+                      ],
+                    )),
+                Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.all(20.0),
+                    padding: EdgeInsets.only(top: 45.0),
+                    child: Column(children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: 15.0, bottom: 5.0, left: 15.0, right: 15.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Container(
+                                alignment: Alignment.center,
+                                child: SizedBox(
+                                    width: 200,
+                                    child: Text("Select DrT Device:"))),
+                            SizedBox(
+                              width: 200,
+                              child: DropdownButton(
+                                value: dropdown,
+                                underline: SizedBox(),
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                items: machines.map((String machines) {
+                                  return DropdownMenuItem(
+                                    value: machines,
+                                    child: Text(machines),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    dropdown = newValue!;
+                                  });
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              width: 200,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (controller.isAnimating) {
+                                    controller.stop();
+                                    setState(() {
+                                      isPlaying = false;
+                                    });
+                                  } else {
+                                    controller.reverse(
+                                        from: controller.value == 0
+                                            ? 1.0
+                                            : controller.value);
+                                    setState(() {
+                                      isPlaying = true;
+                                    });
+                                  }
+                                },
+                                child: Text("Set Device"),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(15.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: 200,
+                              child: Text("Duration(Secs):"),
+                            ),
+                            SizedBox(
+                              width: 200,
+                              child: DropdownButton(
+                                value: second,
+                                underline: SizedBox(),
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                items: seconds.map((String seconds) {
+                                  return DropdownMenuItem(
+                                    value: seconds,
+                                    child: Text(seconds),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    second = newValue!;
+                                    if (controller.isAnimating == false) {
+                                      if (newValue == "10") {
+                                        controller.duration =
+                                            Duration(seconds: 10);
+                                      } else {
+                                        if (newValue == "20") {
+                                          controller.duration =
+                                              Duration(seconds: 20);
+                                        } else {
+                                          controller.duration =
+                                              Duration(seconds: 30);
+                                        }
+                                      }
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              width: 200,
+                              child: ElevatedButton(
+                                onPressed: (() {
+                                  controller.reset();
+                                  setState(() {
+                                    isPlaying = false;
+                                  });
+                                }),
+                                child: Text("Reset Device"),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(15.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: 200,
+                              child: ElevatedButton(
+                                  onPressed: (() {}), child: Text("Normal")),
+                            ),
+                            SizedBox(
+                              width: 200,
+                              child: ElevatedButton(
+                                  onPressed: (() {}), child: Text("Medium")),
+                            ),
+                            SizedBox(
+                              width: 200,
+                              child: ElevatedButton(
+                                  onPressed: (() {}), child: Text("Heavy")),
+                            )
+                          ],
+                        ),
+                      )
+                    ])),
+                Padding(
+                  padding: EdgeInsets.only(top: 60.0, bottom: 15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                          width: 200,
+                          height: 80,
+                          child: Padding(
+                              padding: EdgeInsets.all(20.0),
+                              child: ElevatedButton(
+                                  onPressed: (() {
+                                    Navigator.push(
+                                        context, _AnalysisReportPage());
+                                  }),
+                                  child: Text("Save And Analyse"),
+                                  style: ButtonStyle(
+                                      shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      18.0))))))),
+                      SizedBox(
+                          width: 200,
+                          height: 80,
+                          child: Padding(
+                              padding: EdgeInsets.all(20.0),
+                              child: ElevatedButton(
+                                  onPressed: (() {
+                                    Navigator.pop(context);
+                                  }),
+                                  child: Text("Back to Search"),
+                                  style: ButtonStyle(
+                                      shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      18.0))))))),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        )
+      ],
     ));
   }
 }
@@ -975,7 +1302,12 @@ class _AnalysisReportPage extends MaterialPageRoute {
             child: Center(
               child: Column(
                 children: [
-                  Text("Analysis Report Page"),
+                  Text("Analysis Report Page",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                          fontFamily: "Oswald",
+                          color: Colors.blue[600])),
                   Padding(
                       padding: EdgeInsets.all(20.0),
                       child: ElevatedButton(

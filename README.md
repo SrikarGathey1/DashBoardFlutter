@@ -4,7 +4,6 @@
 
 ### Front End
 
-* Breath Analyzer Page.
 * Analysis Report Page.
 * Search Page.
 
