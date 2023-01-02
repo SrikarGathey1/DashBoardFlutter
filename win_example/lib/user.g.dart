@@ -45,7 +45,7 @@ class UserAdapter extends TypeAdapter<User> {
 
 class PatientAdapter extends TypeAdapter<Patient> {
   @override
-  final int typeId = 8;
+  final int typeId = 45;
 
   @override
   Patient read(BinaryReader reader) {
@@ -100,6 +100,43 @@ class PatientAdapter extends TypeAdapter<Patient> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is PatientAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class RecordAdapter extends TypeAdapter<Record> {
+  @override
+  final int typeId = 20;
+
+  @override
+  Record read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Record(
+      patientNumbers: fields[20] as int,
+      userNumbers: fields[21] as int,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Record obj) {
+    writer
+      ..writeByte(2)
+      ..writeByte(20)
+      ..write(obj.patientNumbers)
+      ..writeByte(21)
+      ..write(obj.userNumbers);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RecordAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

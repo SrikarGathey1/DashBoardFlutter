@@ -1,31 +1,22 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:developer';
-import 'package:hive/hive.dart';
+
 import 'package:win_example/user.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:path/path.dart';
 import 'package:intl/intl.dart';
 import "package:flutter/material.dart";
 
 late Box box;
 late Box patientBox;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-  Hive.registerAdapter(UserAdapter());
-  Hive.registerAdapter(PatientAdapter());
-  box = await Hive.openBox<User>('users');
-  patientBox = await Hive.openBox<Patient>('patients');
-  box.put("venkatnaras123@gmail.com",
-      User(email: "venkatnaras123@gmail.com", password: "OneTwoThree"));
 
   runApp(MaterialApp(
     home: MyApp(),
-    routes: <String, WidgetBuilder>{
-      "/patientreg": (BuildContext context) => new _NewPatientPage(),
-      //add more routes here
-    },
     theme: ThemeData(
       brightness: Brightness.dark,
       primaryColor: Colors.blueAccent,
@@ -132,25 +123,16 @@ class _State extends State<MyApp> {
                             String userPassword = passwordController.text;
                             // log(userEmail);
                             // log(userPassword);
-                            User sample = box.get(userEmail,
-                                defaultValue:
-                                    User(email: "email", password: "password"));
+
                             // log(sample.email);
                             // if (sample.email == userEmail) {
                             // log("yep");
                             // }
-                            if (sample.email == "email") {
-                              log("Email does not exist");
-                            } else {
-                              if (sample.password == userPassword) {
-                                // log(sample.password);
-                                Navigator.push(context, _SearchPage());
-                                emailController.clear();
-                                passwordController.clear();
-                              } else {
-                                log("Invalid password");
-                              }
-                            }
+
+                            // log(sample.password);
+                            Navigator.push(context, _SearchPage());
+                            emailController.clear();
+                            passwordController.clear();
                           },
                           child: Text("Log In"),
                           style: ButtonStyle(
@@ -203,42 +185,104 @@ class _SearchPageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-      padding: EdgeInsets.all(32.0),
-      child: Center(
-        child: Column(
-          children: [
-            Text("Search Page. Login Successful."),
-            Padding(
-                padding: EdgeInsets.all(10.0),
-                child: ElevatedButton(
-                    onPressed: (() {
-                      Navigator.pop(context);
-                    }),
-                    child: Text("Back to Login"))),
-            Padding(
-                padding: EdgeInsets.all(10.0),
-                child: ElevatedButton(
-                    onPressed: null, child: Text("Search Records"))),
-            Padding(
-                padding: EdgeInsets.all(10.0),
-                child: ElevatedButton(
-                    onPressed: (() {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => _NewPatientPage()));
-                    }),
-                    child: Text("New Patient Record"))),
-            Padding(
-                padding: EdgeInsets.all(10.0),
-                child: ElevatedButton(
-                    onPressed: (() {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => _BreathAnalysis()));
-                    }),
-                    child: Text("View Record")))
-          ],
-        ),
-      ),
-    ));
+            padding: EdgeInsets.all(32.0),
+            child: ListView(
+              children: [
+                Center(
+                  child: Column(
+                    children: [
+                      Text("Search Page",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30,
+                              fontFamily: "Oswald",
+                              color: Colors.blue[600])),
+                      Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: SizedBox(
+                            width: 500,
+                            height: 100,
+                            child: TextField(
+                                decoration: InputDecoration(
+                              hintText:
+                                  "Search Patient Records by Name, Patient ID or Date of Birth",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              prefixIcon: Icon(Icons.search),
+                            ))),
+                      ),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(0),
+                              child: Text(
+                                "Search Results",
+                                style: TextStyle(
+                                    fontSize: 30, color: Colors.blue[400]),
+                              ),
+                            )
+                          ]),
+                      Padding(
+                        padding: EdgeInsets.all(30.0),
+                        child: Container(
+                            alignment: Alignment.center,
+                            width: 800,
+                            height: 350,
+                            child: Column(
+                              children: [],
+                            )),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: ElevatedButton(
+                                      onPressed: (() {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) => MyApp()));
+                                      }),
+                                      child: Text("Back to Login"))),
+                              Padding(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: ElevatedButton(
+                                      onPressed: null,
+                                      child: Text("Search Records"))),
+                              Padding(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: ElevatedButton(
+                                      onPressed: (() {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    _NewPatientPage()));
+                                      }),
+                                      child: Text("New Patient Record"))),
+                              Padding(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: ElevatedButton(
+                                      onPressed: (() {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    _BreathAnalysis()));
+                                      }),
+                                      child: Text("View Record")))
+                            ],
+                          )),
+                    ],
+                  ),
+                ),
+              ],
+            )));
   }
 }
 
@@ -343,30 +387,7 @@ class _RegisterPageWidget extends StatelessWidget {
                     Padding(
                         padding: EdgeInsets.all(25.0),
                         child: ElevatedButton(
-                          onPressed: (() {
-                            String userEmail = emailController.text;
-                            User sample = box.get(userEmail,
-                                defaultValue:
-                                    User(email: "email", password: "password"));
-                            String userPassword = passwordController.text;
-                            String userConfirm = resetController.text;
-                            if (sample.email == userEmail) {
-                              log("This email id already exists. Try a different one.");
-                            }
-                            if (userPassword == userConfirm) {
-                              box.put(
-                                  userEmail,
-                                  User(
-                                      email: userEmail,
-                                      password: userPassword));
-                              Navigator.pop(context);
-                              emailController.clear();
-                              passwordController.clear();
-                              resetController.clear();
-                            } else {
-                              log("Passwords do not match");
-                            }
-                          }),
+                          onPressed: (() {}),
                           child: Text("Register"),
                           style: ButtonStyle(
                               shape: MaterialStateProperty.all<
@@ -848,29 +869,6 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                     padding: EdgeInsets.all(30.0),
                     child: ElevatedButton(
                       onPressed: (() {
-                        String first = firstCon.text;
-                        String middle = middleCon.text;
-                        String last = lastCon.text;
-                        String dob = dateController.text;
-                        String gender = genderCon.text;
-                        String phone = phoneCon.text;
-                        String uidai = uidaiCon.text;
-                        String height = heightCon.text;
-                        String weight = weightCon.text;
-                        String email = emailCon.text;
-                        patientBox.put(
-                            uidai,
-                            Patient(
-                                first: first,
-                                middle: middle,
-                                last: last,
-                                dob: dob,
-                                gender: gender,
-                                phone: 0,
-                                uidai: 0,
-                                height: 0,
-                                weight: 0,
-                                email: email));
                         Navigator.pop(context);
                         firstCon.clear();
                         middleCon.clear();
@@ -882,20 +880,6 @@ class _NewPatientPageDis extends State<_NewPatientPage> {
                         heightCon.clear();
                         weightCon.clear();
                         emailCon.clear();
-                        Patient pat1 = patientBox.get(uidai,
-                            defaultValue: Patient(
-                                first: "Not Given",
-                                middle: "Not Given",
-                                last: "Not Given",
-                                email: "Not Given",
-                                dob: "Not Given",
-                                gender: "Not Given",
-                                phone: 0,
-                                height: 0,
-                                weight: 0,
-                                uidai: 0));
-                        log("${pat1.email}");
-                        Navigator.pop(context);
                       }),
                       child: Text("Create Record"),
                       style: ButtonStyle(
@@ -979,18 +963,6 @@ class _BreathAnalysisPage extends State<_BreathAnalysis>
 
   @override
   Widget build(BuildContext context) {
-    Patient disPat = patientBox.get("default",
-        defaultValue: Patient(
-            first: "Srikar",
-            middle: "Middle",
-            last: "Gade",
-            dob: "04/17/2000",
-            gender: "Male",
-            phone: 9597216381,
-            uidai: 111122223333,
-            height: 190,
-            weight: 75,
-            email: "Empty"));
     return Scaffold(
         body: ListView(
       children: [
@@ -1018,7 +990,7 @@ class _BreathAnalysisPage extends State<_BreathAnalysis>
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Text(
-                                "Patient ID: ${disPat.uidai}",
+                                "Patient ID: 111122223333",
                                 style: TextStyle(
                                     fontSize: 20, color: Colors.blue.shade400),
                               )
@@ -1033,10 +1005,7 @@ class _BreathAnalysisPage extends State<_BreathAnalysis>
                                       bottom: 10.0,
                                       left: 20.0,
                                       right: 20.0),
-                                  child: Text(
-                                      "${disPat.first}" +
-                                          " " +
-                                          "${disPat.last}",
+                                  child: Text("Srikar" + " " + "Gade",
                                       style: TextStyle(fontSize: 30))),
                               Padding(
                                   padding: EdgeInsets.only(
@@ -1044,7 +1013,7 @@ class _BreathAnalysisPage extends State<_BreathAnalysis>
                                       bottom: 10.0,
                                       left: 20.0,
                                       right: 20.0),
-                                  child: Text("${disPat.dob}"))
+                                  child: Text("17/04/2000"))
                             ],
                           ),
                           Row(
@@ -1057,7 +1026,7 @@ class _BreathAnalysisPage extends State<_BreathAnalysis>
                                       left: 20.0,
                                       right: 20.0),
                                   child: Text(
-                                    "${disPat.gender}",
+                                    "Male",
                                   )),
                               Padding(
                                   padding: EdgeInsets.only(
@@ -1066,13 +1035,13 @@ class _BreathAnalysisPage extends State<_BreathAnalysis>
                                       left: 20.0,
                                       right: 20.0),
                                   child: Text(
-                                    "Height: ${disPat.height} cm.",
+                                    "Height: 190 cm.",
                                   )),
                               Padding(
                                   padding:
                                       EdgeInsets.only(left: 20.0, right: 20.0),
                                   child: Text(
-                                    "Weight: ${disPat.weight} Kg.",
+                                    "Weight: 75 Kg.",
                                   )),
                             ],
                           ),
@@ -1254,7 +1223,9 @@ class _BreathAnalysisPage extends State<_BreathAnalysis>
                               child: ElevatedButton(
                                   onPressed: (() {
                                     Navigator.push(
-                                        context, _AnalysisReportPage());
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => _AnalysisReport()));
                                   }),
                                   child: Text("Save And Analyse"),
                                   style: ButtonStyle(
@@ -1293,31 +1264,171 @@ class _BreathAnalysisPage extends State<_BreathAnalysis>
   }
 }
 
-class _AnalysisReportPage extends MaterialPageRoute {
-  _AnalysisReportPage()
-      : super(builder: (BuildContext context) {
-          return Scaffold(
-              body: Container(
+class _AnalysisReport extends StatefulWidget {
+  @override
+  _AnalysisReportPage createState() => _AnalysisReportPage();
+}
+
+class _AnalysisReportPage extends State<_AnalysisReport> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Container(
             padding: EdgeInsets.all(32.0),
-            child: Center(
-              child: Column(
-                children: [
-                  Text("Analysis Report Page",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
-                          fontFamily: "Oswald",
-                          color: Colors.blue[600])),
-                  Padding(
-                      padding: EdgeInsets.all(20.0),
-                      child: ElevatedButton(
-                          onPressed: (() {
-                            Navigator.pop(context);
-                          }),
-                          child: Text("Back to Analyser"))),
-                ],
-              ),
-            ),
-          ));
-        });
+            child: ListView(
+              children: [
+                Center(
+                  child: Column(
+                    children: [
+                      Container(
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 30.0, top: 15.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Analysis Report Page",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 30,
+                                          fontFamily: "Oswald",
+                                          color: Colors.blue[600]))
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text("Srikar" + " " + "Gade"),
+                                  Text("17/04/2000"),
+                                  Text("111122223333")
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text("Weight:" + " " + "75 Kg"),
+                                  Text("Height:" + " " + "190 cms"),
+                                  Text("Gender:" + " " + "Male")
+                                ],
+                              ),
+                            )
+                          ])),
+                      Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: SfCartesianChart(
+                            margin: EdgeInsets.all(0),
+                            borderWidth: 0,
+                            borderColor: Colors.transparent,
+                            primaryXAxis: NumericAxis(
+                                minimum: 0, maximum: 10, interval: 1),
+                            primaryYAxis: NumericAxis(
+                                minimum: -3, maximum: 3, interval: 1),
+                          )),
+                      Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.only(
+                              top: 40.0, bottom: 5.0, left: 10.0, right: 10.0),
+                          margin: EdgeInsets.all(20.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Column(children: [
+                                Row(children: [
+                                  Text("50 cycles/min",
+                                      style: TextStyle(fontSize: 25))
+                                ]),
+                                Row(children: [
+                                  Text(
+                                    "Respiration Rate",
+                                    style: TextStyle(color: Colors.grey[400]),
+                                  )
+                                ]),
+                              ]),
+                              Column(children: [
+                                Row(children: [
+                                  Text("50 m/sec",
+                                      style: TextStyle(fontSize: 25))
+                                ]),
+                                Row(children: [
+                                  Text("Mean Inspiration Velocity",
+                                      style: TextStyle(color: Colors.grey[400]))
+                                ]),
+                              ]),
+                              Column(children: [
+                                Row(children: [
+                                  Text("50 m/sec",
+                                      style: TextStyle(fontSize: 25))
+                                ]),
+                                Row(children: [
+                                  Text("Mean Expiration Velocity",
+                                      style: TextStyle(color: Colors.grey[400]))
+                                ]),
+                              ])
+                            ],
+                          )),
+                      Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.only(
+                              top: 5.0, bottom: 10.0, left: 10.0, right: 10.0),
+                          margin: EdgeInsets.all(20.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Column(children: [
+                                Row(children: [
+                                  Text("50 Liters/sec",
+                                      style: TextStyle(fontSize: 25))
+                                ]),
+                                Row(children: [
+                                  Text(
+                                    "Mean Inspiration Volume",
+                                    style: TextStyle(color: Colors.grey[400]),
+                                  )
+                                ]),
+                              ]),
+                              Column(children: [
+                                Row(children: [
+                                  Text("50 Liters/sec",
+                                      style: TextStyle(fontSize: 25))
+                                ]),
+                                Row(children: [
+                                  Text("Mean Expiration Volume",
+                                      style: TextStyle(color: Colors.grey[400]))
+                                ]),
+                              ]),
+                              Column(children: [
+                                Row(children: [
+                                  Text("50 Liters/sec",
+                                      style: TextStyle(fontSize: 25))
+                                ]),
+                                Row(children: [
+                                  Text("Mean Tidal Volume",
+                                      style: TextStyle(color: Colors.grey[400]))
+                                ]),
+                              ])
+                            ],
+                          )),
+                      Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: ElevatedButton(
+                              onPressed: (() {
+                                Navigator.pop(context);
+                              }),
+                              child: Text("Back to Analyser"))),
+                    ],
+                  ),
+                ),
+              ],
+            )));
+  }
 }

@@ -12,7 +12,7 @@ class User extends HiveObject {
   late String password;
 }
 
-@HiveType(typeId: 8)
+@HiveType(typeId: 45)
 class Patient extends HiveObject {
   Patient(
       {required this.first,
@@ -55,4 +55,15 @@ class Patient extends HiveObject {
 
   @HiveField(18)
   late String email;
+}
+
+@HiveType(typeId: 20)
+class Record extends HiveObject {
+  @HiveField(20)
+  late int patientNumbers = 0;
+
+  @HiveField(21)
+  late int userNumbers = 0;
+
+  Record({required this.patientNumbers, required this.userNumbers});
 }
